@@ -16,7 +16,14 @@ function show_usage() {
 
 function show_readme() {
     printf "
-## Quick Start
+## Copy .bashrc
+
+$ cat .bashrc >> ~/.bashrc
+
+## Copy .vimrc
+
+$ cat .vimrc >> ~/.vimrc
+
 "
 }
 
