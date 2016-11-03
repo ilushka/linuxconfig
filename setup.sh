@@ -37,12 +37,26 @@ function install_nerdtree() {
     cd ~/.vim/bundle && git clone https://github.com/scrooloose/nerdtree.git
 }
 
+function install_ctrlp() {
+    cd ~/.vim/bundle && git clone https://github.com/kien/ctrlp.vim.git
+}
+
+function install_vimack() {
+    cd ~/.vim/bundle && git clone https://github.com/mileszs/ack.vim.git
+}
+
 case $1 in
     "pathogen") # first-level-arg
         install_pathogen
         ;;
     "nerdtree") # first-level-arg
         install_nerdtree
+        ;;
+    "ctrlp") # first-level-arg
+        install_ctrlp
+        ;;
+    "vimack") # first-level-arg
+        install_vimack
         ;;
     "help") # first-level-arg;
         show_usage "${@:2}"
