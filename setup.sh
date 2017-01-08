@@ -17,13 +17,13 @@ function show_usage() {
 function show_readme() {
     printf "
 ## Copy .bashrc
-
 $ cat .bashrc >> ~/.bashrc
 
 ## Copy .vimrc
-
 $ cat .vimrc >> ~/.vimrc
 
+## Copy .Xresource
+$ cat .Xresource >> ~/.Xresource
 "
 }
 
