@@ -45,6 +45,10 @@ function install_vimack() {
     cd ~/.vim/bundle && git clone https://github.com/mileszs/ack.vim.git
 }
 
+function install_pip() {
+    curl -O https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
+}
+
 case $1 in
     "pathogen") # first-level-arg
         install_pathogen
@@ -57,6 +61,9 @@ case $1 in
         ;;
     "vimack") # first-level-arg
         install_vimack
+        ;;
+    "pip") # first-level-arg
+        install_pip
         ;;
     "help") # first-level-arg;
         show_usage "${@:2}"
