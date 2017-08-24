@@ -8,5 +8,6 @@ syntax on
 set expandtab
 set tabstop=2
 set shiftwidth=2
-
-
+set ruler
+set scrolloff=3
+set cursorline
