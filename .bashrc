@@ -1,2 +1,0 @@
-set -o vi
-alias ll="ls -la --color"

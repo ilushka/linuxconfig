@@ -1,76 +1,84 @@
 #!/bin/bash
 
-set -e
+PATHOGEN_PATH=~/.vim/autoload/pathogen.vim
+NERDTREE_PATH=~/.vim/bundle/nerdtree
+CTRLP_PATH=~/.vim/bundle/ctrlp.vim
+ACKVIM_PATH=~/.vim/bundle/ack.vim
+TAGBAR_PATH=~/.vim/bundle/tagbar
+BASHRC_PATH=~/.bashrc
+BASH_PROFILE_PATH=~/.bash_profile
+VIMRC_PATH=~/.vimrc
 
-BIN_NAME=$(basename $0)
-
-function show_usage() {
-    case $1 in
-        "pathogen")
-            printf "install runtimepath manager (https://github.com/tpope/vim-pathogen)\n"
-            ;;
-        "nerdtree")
-            printf "install filesystem explorer (https://github.com/scrooloose/nerdtree)\n"
-            ;;
-        "ctrlp")
-            printf "install fuzzy finder (https://github.com/kien/ctrlp.vim)\n"
-            ;;
-        "vimack")
-            printf "install ack-grep plugin (https://github.com/mileszs/ack.vim)\n"
-            ;;
-        "pip")
-            printf "install python package manager (https://pypi.org/project/pip/)\n"
-            ;;
-        "virtualenv")
-            printf "install python virtual environments tool (https://virtualenv.pypa.io/en/latest/)\n"
-            ;;
-        "ackgrep")
-            printf "install grep tool optimized for programmers (https://beyondgrep.com/)\n"
-            ;;
-        *)
-            printf "Usage: ${BIN_NAME} <"
-            cat ${BIN_NAME} | awk 'BEGIN { FS = "\""; ORS = "|"; } /\"[a-z]+\"\) # first-level-arg/ { print $2; }'
-            printf "\b>\n"
-            ;;
-    esac
-}
-
-function show_readme() {
-    printf "
-## copy .bashrc
-$ cat .bashrc >> ~/.bashrc
-
-## copy .vimrc
-$ cat .vimrc >> ~/.vimrc
-
-## copy .Xresource
-$ cat .Xresource >> ~/.Xresource
-"
-}
-
-function run_as_root() {
-    if [[ $EUID -ne 0 ]]; then
-        printf "run this as root\n"
-        exit 1
+function ask() {
+    read -s -n1 -p "$1"$' [yn]\n' _is_yes
+    if [ "$_is_yes" = "y" ] || [  "$_is_yes" = "Y" ]; then
+        echo "yes"
+    else
+        echo "no"
     fi
 }
 
 function install_pathogen() {
     mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-        curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-    printf "don't forget to update .vimrc\n"
+        curl -LSso $PATHOGEN_PATH https://tpo.pe/pathogen.vim
+    echo 'execute pathogen#infect()' >> ~/.vimrc
+}
+
+function install_vimrc() {
+    cat <<'EOF' >> $VIMRC_PATH
+set number
+set nocompatible
+syntax on
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set ruler
+set scrolloff=3
+
+" show horizontal line under cursor
+" set cursorline
+
+" show tabe, space, and newline charaters
+" set list
+" set listchars=tab:▸-,space:·,trail:¬
+
+" show 80-character line limit
+" set textwidth=80
+" set colorcolumn=+1
+EOF
+}
+
+function install_bashrc() {
+    bash_config=$1
+    cat <<'EOF' >> $bash_config
+set -o vi
+alias ll="ls -laG"
+EOF
 }
 
 function install_nerdtree() {
     cd ~/.vim/bundle && git clone https://github.com/scrooloose/nerdtree.git
+    echo 'let g:NERDTreeWinSize = 22' >> ~/.vimrc
 }
 
-function install_ctrlp() {
-    cd ~/.vim/bundle && git clone https://github.com/kien/ctrlp.vim.git
+function install_ack() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "Installing ack"
+        brew install ack
+    else
+        sudo apt-get install ack-grep
+    fi
 }
 
-function install_vimack() {
-    cd ~/.vim/bundle && git clone https://github.com/mileszs/ack.vim.git
+function install_ctags() {
+    bash_config=$1
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "Installing ctags"
+        brew install ctags
+        echo "alias ctags=\"$(brew --prefix)/bin/ctags\"" >> $bash_config
+    else
+        sudo apt-get install ctags
+    fi
 }
 
 function install_pip() {
@@ -78,45 +86,61 @@ function install_pip() {
 }
 
 function install_virtualenv() {
-    run_as_root
     pip install virtualenv
 }
 
-function install_ackgrep() {
-    run_as_root
-    apt-get install ack-grep
+function install_ctrlp() {
+    cd ~/.vim/bundle && git clone https://github.com/kien/ctrlp.vim.git
 }
 
-case $1 in
-    "pathogen") # first-level-arg
-        install_pathogen
-        ;;
-    "nerdtree") # first-level-arg
-        install_nerdtree
-        ;;
-    "ctrlp") # first-level-arg
-        install_ctrlp
-        ;;
-    "vimack") # first-level-arg
-        install_vimack
-        ;;
-    "pip") # first-level-arg
-        install_pip
-        ;;
-    "virtualenv") # first-level-arg
-        install_virtualenv
-        ;;
-    "ackgrep") # first-level-arg
-        install_ackgrep
-        ;;
-    "help") # first-level-arg;
-        show_usage "${@:2}"
-        ;;
-    "readme") # first-level-arg;
-        show_readme
-        ;;
-    *)
-        show_usage "${@:2}"
-        ;;
-esac
+function install_ackvim() {
+    cd ~/.vim/bundle && git clone https://github.com/mileszs/ack.vim.git
+}
+
+function install_tagbar() {
+    cd ~/.vim/bundle && git clone https://github.com/majutsushi/tagbar.git
+    cat <<'EOF' >> $VIMRC_PATH
+let g:tagbar_width = 30
+nmap <F8> :TagbarToggle<CR>
+EOF
+}
+
+[ -f $PATHOGEN_PATH ] && echo "Pathogen might be already installed."
+[ "$(ask 'Install pathogen?')" = "yes" ] && install_pathogen
+
+[ -d $NERDTREE_PATH ] && echo "NERDtree might be already installed."
+[ "$(ask 'Install NERDtree?')" = "yes" ] && install_nerdtree
+
+[ -d $CTRLP_PATH ] && echo "ctrlp.vim might be already installed."
+[ "$(ask 'Install ctrlp.vim?')" = "yes" ] && install_ctrlp
+
+[ -d $ACKVIM_PATH ] && echo "ack.vim might be already installed."
+[ "$(ask 'Install ack.vim?')" = "yes" ] && install_ackvim
+
+[ -d $TAGBAR_PATH ] && echo "Tagbar might be already installed."
+[ "$(ask 'Install Tagbar?')" = "yes" ] && install_tagbar
+
+[ -f $VIMRC_PATH ] && [ ! "$(cat $VIMRC_PATH | grep 'set tabstop=2')_" = "_" ] \
+        && echo "vimrc might be already installed"
+[ "$(ask 'Install vimrc?')" = "yes" ] && install_vimrc
+
+# figure out which bash configuration file to use
+if [ -f $BASHRC_PATH ]; then
+    bash_conf=$BASHRC_PATH
+else
+    bash_conf=$BASH_PROFILE_PATH
+fi
+
+[ ! "$(cat $bash_conf | grep 'set -o vi')_" = "_" ] \
+        && echo "bashrc might be already installed"
+[ "$(ask 'Install bashrc?')" = "yes" ] && install_bashrc $bash_conf
+
+[ ! "$(command -v ack)_" = "_" ] && echo "ack is already installed"
+[ "$(ask 'Install ack?')" = "yes" ] && install_ack
+
+[ ! "$(command -v pip)_" = "_" ] && echo "pip is already installed"
+[ "$(ask 'Install pip?')" = "yes" ] && install_pip
+
+[ ! "$(command -v ctags)_" = "_" ] && echo "ctags might be already installed"
+[ "$(ask 'Install ctags?')" = "yes" ] && install_ctags $bash_conf
 
