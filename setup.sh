@@ -35,6 +35,11 @@ set shiftwidth=2
 set ruler
 set scrolloff=3
 
+" Update refresh time to 100ms for gitgutter
+set updatetime=100
+" Increase max number of changes to display
+let g:gitgutter_max_signs=1000
+
 " show horizontal line under cursor
 " set cursorline
 
