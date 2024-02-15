@@ -6,6 +6,7 @@ CTRLP_PATH=~/.vim/bundle/ctrlp.vim
 ACKVIM_PATH=~/.vim/bundle/ack.vim
 TAGBAR_PATH=~/.vim/bundle/tagbar
 GITGUTTER_PATH=~/.vim/bundle/vim-gitgutter
+ANSIESC_PATH=~/.vim/bundle/vim-plugin-AnsiEsc
 BASHRC_PATH=~/.bashrc
 BASH_PROFILE_PATH=~/.bash_profile
 VIMRC_PATH=~/.vimrc
@@ -159,6 +160,10 @@ function install_gitgutter() {
     cd ~/.vim/bundle && git clone https://github.com/airblade/vim-gitgutter.git
 }
 
+function install_ansiesc() {
+    cd ~/.vim/bundle && git clone https://github.com/powerman/vim-plugin-AnsiEsc.git
+}
+
 ### Python
 
 function install_virtualenv() {
@@ -202,6 +207,9 @@ function main() {
 
     [ -d $GITGUTTER_PATH ] && echo "GitGutter might be already installed."
     [ "$(ask 'Install GitGutter?')" = "yes" ] && install_gitgutter
+
+    [ -d $ANSIESC_PATH ] && echo "AnsiEsc might be already installed."
+    [ "$(ask 'Install AnsiEsc?')" = "yes" ] && install_ansiesc
 
     # figure out which bash configuration file to use
     if [ -f $BASHRC_PATH ]; then
