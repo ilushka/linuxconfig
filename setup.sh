@@ -25,7 +25,6 @@ function install_bashrc() {
     bash_config=$1
     cat <<'EOF' >> $bash_config
 set -o vi
-alias ll="ls -laG"
 alias vv="vi $(fzf)"
 alias open="nohup xdg-open"
 
@@ -84,6 +83,10 @@ function parse_git_dirty {
 
 export PS1="\[\e[33m\]\u\[\e[m\]\[\e[35m\]\`parse_git_branch\`\[\e[m\]🐁 "
 EOF
+
+  if ! grep -q 'alias ll=' $bash_config; then
+      echo 'alias ll="ls -laG"' >> $bash_config
+  fi
 }
 
 ### vim
