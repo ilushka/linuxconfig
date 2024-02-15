@@ -214,7 +214,7 @@ function main() {
             && echo "bashrc might be already installed"
     [ "$(ask 'Install bashrc?')" = "yes" ] && install_bashrc $bash_conf
 
-    [ ! "$(command -v ack)_" = "_" ] && echo "ack is already installed"
+    [ ! "$(command -v ack)_" = "_" ] && echo "ack might be already installed"
     [ "$(ask 'Install ack?')" = "yes" ] && install_ack
 
     [ ! "$(command -v pip)_" = "_" ] && echo "pip is already installed"
@@ -224,7 +224,7 @@ function main() {
         && echo "ctags might be already installed"
     [ "$(ask 'Install ctags?')" = "yes" ] && install_ctags $bash_conf
 
-    [ ! "$(command -v fd)_" = "_" && ! "$(command -v fdfind)_" = "_"] \
+    [ ! "$(command -v fd)_" = "_" && ! "$(command -v fdfind)_" = "_" ] \
         && echo "fd might be already installed"
     [ "$(ask 'Install fd?')" = "yes" ] && install_fd
 
