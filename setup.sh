@@ -157,10 +157,6 @@ function install_gitgutter() {
 
 ### Python
 
-function install_pip() {
-    curl -O https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
-}
-
 function install_virtualenv() {
     pip install virtualenv
 }
@@ -217,14 +213,11 @@ function main() {
     [ ! "$(command -v ack)_" = "_" ] && echo "ack might be already installed"
     [ "$(ask 'Install ack?')" = "yes" ] && install_ack
 
-    [ ! "$(command -v pip)_" = "_" ] && echo "pip is already installed"
-    [ "$(ask 'Install pip?')" = "yes" ] && install_pip
-
     [ ! "$(command -v ctags)_" = "_" ] \
         && echo "ctags might be already installed"
     [ "$(ask 'Install ctags?')" = "yes" ] && install_ctags $bash_conf
 
-    [ ! "$(command -v fd)_" = "_" && ! "$(command -v fdfind)_" = "_" ] \
+    [ ! \( "$(command -v fd)_" = "_" -a "$(command -v fdfind)_" = "_" \) ] \
         && echo "fd might be already installed"
     [ "$(ask 'Install fd?')" = "yes" ] && install_fd
 
@@ -234,7 +227,7 @@ function main() {
     [ ! "$(command -v cscope)_" = "_" ] && echo "cscope might be already installed"
     [ "$(ask 'Install cscope?')" = "yes" ] && install_cscope
 
-    [ ! "$(command -v bat)_" = "_" && ! "$(command -v batcat)_" = "_" ] \
+    [ ! \( "$(command -v bat)_" = "_" -a "$(command -v batcat)_" = "_" \) ] \
         && echo "bat might be already installed"
     [ "$(ask 'Install bat?')" = "yes" ] && install_bat
 }
