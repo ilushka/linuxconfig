@@ -26,6 +26,8 @@ function install_bashrc() {
     cat <<'EOF' >> $bash_config
 set -o vi
 alias ll="ls -laG"
+alias vv="vi $(fzf)"
+alias open="nohup xdg-open"
 
 # get current branch in git repo
 function parse_git_branch() {
