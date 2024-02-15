@@ -224,7 +224,8 @@ function main() {
         && echo "ctags might be already installed"
     [ "$(ask 'Install ctags?')" = "yes" ] && install_ctags $bash_conf
 
-    [ ! "$(command -v fd)_" = "_" ] && echo "fd might be already installed"
+    [ ! "$(command -v fd)_" = "_" && ! "$(command -v fdfind)_" = "_"] \
+        && echo "fd might be already installed"
     [ "$(ask 'Install fd?')" = "yes" ] && install_fd
 
     [ ! "$(command -v fzf)_" = "_" ] && echo "fzf might be already installed"
@@ -233,7 +234,8 @@ function main() {
     [ ! "$(command -v cscope)_" = "_" ] && echo "cscope might be already installed"
     [ "$(ask 'Install cscope?')" = "yes" ] && install_cscope
 
-    [ ! "$(command -v bat)_" = "_" ] && echo "bat might be already installed"
+    [ ! "$(command -v bat)_" = "_" && ! "$(command -v batcat)_" = "_" ] \
+        && echo "bat might be already installed"
     [ "$(ask 'Install bat?')" = "yes" ] && install_bat
 }
 

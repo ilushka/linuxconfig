@@ -5,7 +5,7 @@ function install_ack() {
 
 function install_ctags() {
     echo "Installing ctags"
-    sudo apt install ctags
+    sudo apt install exuberant-ctags
 }
 
 function install_fd() {
