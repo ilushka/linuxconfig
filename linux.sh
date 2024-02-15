@@ -11,6 +11,9 @@ function install_ctags() {
 function install_fd() {
     echo "Installing fd"
     sudo apt install fd-find
+    if [ ! "$(command -v fdfind)_" = "_" ]; then
+        ln -s $(which fdfind) ~/.local/bin/fd
+    fi
 }
 
 function install_fzf() {
