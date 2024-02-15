@@ -24,9 +24,10 @@ function ask() {
 function install_bashrc() {
     bash_config=$1
     cat <<'EOF' >> $bash_config
+
 set -o vi
-alias vv="vi $(fzf)"
-alias open="nohup xdg-open"
+alias vv='vi $(fzf)'
+alias open='nohup xdg-open'
 
 # get current branch in git repo
 function parse_git_branch() {
