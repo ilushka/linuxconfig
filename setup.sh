@@ -19,47 +19,7 @@ function ask() {
     fi
 }
 
-function install_pathogen() {
-    mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-        curl -LSso $PATHOGEN_PATH https://tpo.pe/pathogen.vim
-    echo 'execute pathogen#infect()' >> ~/.vimrc
-}
-
-function install_vimrc() {
-    cat <<'EOF' >> $VIMRC_PATH
-set number
-set nocompatible
-syntax on
-set expandtab
-set tabstop=2
-set shiftwidth=2
-set ruler
-set scrolloff=3
-
-" Update refresh time to 100ms for gitgutter
-set updatetime=100
-" Increase max number of changes to display
-let g:gitgutter_max_signs=1000
-
-set laststatus=2
-set statusline=
-set statusline+=%#Pmenu#
-set statusline+=%f\ \   
-set statusline+=%l:%c\ \   
-set statusline+=%{tagbar#currenttag('%s',\ '',\ 'f',\ 'scoped-stl')}
-
-" show horizontal line under cursor
-" set cursorline
-
-" show tab, space, and newline charaters
-" set list
-" set listchars=tab:▸-,space:·,trail:¬
-
-" show 80-character line limit
-" set textwidth=80
-" set colorcolumn=+1
-EOF
-}
+### shell
 
 function install_bashrc() {
     bash_config=$1
@@ -124,41 +84,53 @@ export PS1="\[\e[33m\]\u\[\e[m\]\[\e[35m\]\`parse_git_branch\`\[\e[m\]🐁 "
 EOF
 }
 
+### vim
+
+function install_pathogen() {
+    mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+        curl -LSso $PATHOGEN_PATH https://tpo.pe/pathogen.vim
+    echo 'execute pathogen#infect()' >> ~/.vimrc
+}
+
+function install_vimrc() {
+    cat <<'EOF' >> $VIMRC_PATH
+set number
+set nocompatible
+syntax on
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set ruler
+set scrolloff=3
+
+" Update refresh time to 100ms for gitgutter
+set updatetime=100
+" Increase max number of changes to display
+let g:gitgutter_max_signs=1000
+
+set laststatus=2
+set statusline=
+set statusline+=%#Pmenu#
+set statusline+=%f\ \   
+set statusline+=%l:%c\ \   
+set statusline+=%{tagbar#currenttag('%s',\ '',\ 'f',\ 'scoped-stl')}
+
+" show horizontal line under cursor
+" set cursorline
+
+" show tab, space, and newline charaters
+" set list
+" set listchars=tab:▸-,space:·,trail:¬
+
+" show 80-character line limit
+" set textwidth=80
+" set colorcolumn=+1
+EOF
+}
+
 function install_nerdtree() {
     cd ~/.vim/bundle && git clone https://github.com/scrooloose/nerdtree.git
     echo 'let g:NERDTreeWinSize = 22' >> ~/.vimrc
-}
-
-function install_ack() {
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "Installing ack"
-        brew install ack
-    else
-        sudo apt-get install ack-grep
-    fi
-}
-
-function install_ctags() {
-    bash_config=$1
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "Installing ctags"
-        brew install ctags
-        echo "alias ctags=\"$(brew --prefix)/bin/ctags\"" >> $bash_config
-    else
-        sudo apt-get install ctags
-    fi
-}
-
-function install_pip() {
-    curl -O https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
-}
-
-function install_virtualenv() {
-    pip install virtualenv
-}
-
-function install_fd() {
-    sudo apt install fd-find
 }
 
 function install_ctrlp() {
@@ -181,47 +153,86 @@ function install_gitgutter() {
     cd ~/.vim/bundle && git clone https://github.com/airblade/vim-gitgutter.git
 }
 
-[ -f $PATHOGEN_PATH ] && echo "Pathogen might be already installed."
-[ "$(ask 'Install pathogen?')" = "yes" ] && install_pathogen
+### Python
 
-[ -f $VIMRC_PATH ] && [ ! "$(cat $VIMRC_PATH | grep 'set tabstop=2')_" = "_" ] \
+function install_pip() {
+    curl -O https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
+}
+
+function install_virtualenv() {
+    pip install virtualenv
+}
+
+function main() {
+    case "$OSTYPE" in
+        "darwin"*)
+            echo "Platform: Mac OS"
+            source macos.sh
+            ;;
+        "linux"*)
+            echo "Platform: Linux"
+            source linux.sh
+            ;;
+        *)
+            echo "Platform: Unknown"
+            ;;
+    esac
+
+    [ -f $PATHOGEN_PATH ] && echo "Pathogen might be already installed."
+    [ "$(ask 'Install pathogen?')" = "yes" ] && install_pathogen
+
+    [ -f $VIMRC_PATH ] \
+        && [ ! "$(cat $VIMRC_PATH | grep 'set tabstop=2')_" = "_" ] \
         && echo "vimrc might be already installed"
-[ "$(ask 'Install vimrc?')" = "yes" ] && install_vimrc
+    [ "$(ask 'Install vimrc?')" = "yes" ] && install_vimrc
 
-[ -d $NERDTREE_PATH ] && echo "NERDtree might be already installed."
-[ "$(ask 'Install NERDtree?')" = "yes" ] && install_nerdtree
+    [ -d $NERDTREE_PATH ] && echo "NERDtree might be already installed."
+    [ "$(ask 'Install NERDtree?')" = "yes" ] && install_nerdtree
 
-[ -d $CTRLP_PATH ] && echo "ctrlp.vim might be already installed."
-[ "$(ask 'Install ctrlp.vim?')" = "yes" ] && install_ctrlp
+    [ -d $CTRLP_PATH ] && echo "ctrlp.vim might be already installed."
+    [ "$(ask 'Install ctrlp.vim?')" = "yes" ] && install_ctrlp
 
-[ -d $ACKVIM_PATH ] && echo "ack.vim might be already installed."
-[ "$(ask 'Install ack.vim?')" = "yes" ] && install_ackvim
+    [ -d $ACKVIM_PATH ] && echo "ack.vim might be already installed."
+    [ "$(ask 'Install ack.vim?')" = "yes" ] && install_ackvim
 
-[ -d $TAGBAR_PATH ] && echo "Tagbar might be already installed."
-[ "$(ask 'Install Tagbar?')" = "yes" ] && install_tagbar
+    [ -d $TAGBAR_PATH ] && echo "Tagbar might be already installed."
+    [ "$(ask 'Install Tagbar?')" = "yes" ] && install_tagbar
 
-[ -d $GITGUTTER_PATH ] && echo "GitGutter might be already installed."
-[ "$(ask 'Install GitGutter?')" = "yes" ] && install_gitgutter
+    [ -d $GITGUTTER_PATH ] && echo "GitGutter might be already installed."
+    [ "$(ask 'Install GitGutter?')" = "yes" ] && install_gitgutter
 
-# figure out which bash configuration file to use
-if [ -f $BASHRC_PATH ]; then
-    bash_conf=$BASHRC_PATH
-else
-    bash_conf=$BASH_PROFILE_PATH
-fi
+    # figure out which bash configuration file to use
+    if [ -f $BASHRC_PATH ]; then
+        bash_conf=$BASHRC_PATH
+    else
+        bash_conf=$BASH_PROFILE_PATH
+    fi
 
-[ ! "$(cat $bash_conf | grep 'set -o vi')_" = "_" ] \
-        && echo "bashrc might be already installed"
-[ "$(ask 'Install bashrc?')" = "yes" ] && install_bashrc $bash_conf
+    [ ! "$(cat $bash_conf | grep 'set -o vi')_" = "_" ] \
+            && echo "bashrc might be already installed"
+    [ "$(ask 'Install bashrc?')" = "yes" ] && install_bashrc $bash_conf
 
-[ ! "$(command -v ack)_" = "_" ] && echo "ack is already installed"
-[ "$(ask 'Install ack?')" = "yes" ] && install_ack
+    [ ! "$(command -v ack)_" = "_" ] && echo "ack is already installed"
+    [ "$(ask 'Install ack?')" = "yes" ] && install_ack
 
-[ ! "$(command -v pip)_" = "_" ] && echo "pip is already installed"
-[ "$(ask 'Install pip?')" = "yes" ] && install_pip
+    [ ! "$(command -v pip)_" = "_" ] && echo "pip is already installed"
+    [ "$(ask 'Install pip?')" = "yes" ] && install_pip
 
-[ ! "$(command -v ctags)_" = "_" ] && echo "ctags might be already installed"
-[ "$(ask 'Install ctags?')" = "yes" ] && install_ctags $bash_conf
+    [ ! "$(command -v ctags)_" = "_" ] \
+        && echo "ctags might be already installed"
+    [ "$(ask 'Install ctags?')" = "yes" ] && install_ctags $bash_conf
 
-[ ! "$(command -v fd)_" = "_" ] && echo "fd might be already installed"
-[ "$(ask 'Install fd?')" = "yes" ] && install_fd
+    [ ! "$(command -v fd)_" = "_" ] && echo "fd might be already installed"
+    [ "$(ask 'Install fd?')" = "yes" ] && install_fd
+
+    [ ! "$(command -v fzf)_" = "_" ] && echo "fzf might be already installed"
+    [ "$(ask 'Install fzf?')" = "yes" ] && install_fzf
+
+    [ ! "$(command -v cscope)_" = "_" ] && echo "cscope might be already installed"
+    [ "$(ask 'Install cscope?')" = "yes" ] && install_cscope
+
+    [ ! "$(command -v bat)_" = "_" ] && echo "bat might be already installed"
+    [ "$(ask 'Install bat?')" = "yes" ] && install_bat
+}
+
+main
