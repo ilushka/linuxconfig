@@ -109,6 +109,7 @@ set tabstop=2
 set shiftwidth=2
 set ruler
 set scrolloff=3
+set ffs=unix
 
 " Update refresh time to 100ms for gitgutter
 set updatetime=100
@@ -242,6 +243,9 @@ function main() {
     [ ! \( "$(command -v bat)_" = "_" -a "$(command -v batcat)_" = "_" \) ] \
         && echo "bat might be already installed"
     [ "$(ask 'Install bat?')" = "yes" ] && install_bat
+
+    [ ! "$(command -v tig)_" = "_" ] && echo "tig might be already installed"
+    [ "$(ask 'Install tig?')" = "yes" ] && install_tig
 }
 
 main

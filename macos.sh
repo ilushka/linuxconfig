@@ -27,3 +27,8 @@ function install_cscope() {
 function install_bat() {
     echo "Installing bat not supported"
 }
+
+function install_tig() {
+    echo "Installing tig"
+    brew install tig
+}
