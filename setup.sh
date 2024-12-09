@@ -246,6 +246,9 @@ function main() {
 
     [ ! "$(command -v tig)_" = "_" ] && echo "tig might be already installed"
     [ "$(ask 'Install tig?')" = "yes" ] && install_tig
+
+    [ ! "$(command -v maim)_" = "_" ] && echo "maim might be already installed"
+    [ "$(ask 'Install maim?')" = "yes" ] && install_maim
 }
 
 main
