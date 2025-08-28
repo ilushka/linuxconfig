@@ -178,8 +178,8 @@ function main() {
             source macos.sh
             ;;
         "linux"*)
-            echo "Platform: Linux"
-            source linux.sh
+            which apt && echo "Platform: Debian-based Linux" && source debian.sh
+            which pacman && echo "Platform: Arch Linux" && source arch.sh
             ;;
         *)
             echo "Platform: Unknown"
